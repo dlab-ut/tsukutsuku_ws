@@ -5,9 +5,9 @@ repositories:
     type: git
     url: https://github.com/sgk-000/ypspur_ros_bridge.git
     version: ros2
-  roboken/yp_launch:
+  roboken/tsukutsuku_launch:
     type: git
-    url: https://github.com/sgk-000/yp_launch.git
+    url: https://github.com/dlab-ut/tsukutsuku_launch.git
     version: ros2
   roboken/yp_robot_config:
     type: git
