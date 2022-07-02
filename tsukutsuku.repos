@@ -1,13 +1,17 @@
 repositories:
 
 #roboken
-  roboken/ypspur_ros_bridge:
+  roboken/ypspur_ros2_bridge:
     type: git
-    url: https://github.com/sgk-000/ypspur_ros_bridge.git
-    version: ros2
+    url: https://github.com/sgk-000/ypspur_ros2_bridge.git
+    version: develop
   roboken/tsukutsuku_launch:
     type: git
     url: https://github.com/dlab-ut/tsukutsuku_launch.git
+    version: ros2
+  roboken/yp_launch:
+    type: git
+    url: https://github.com/sgk-000/yp_launch.git
     version: ros2
   roboken/yp_robot_config:
     type: git
@@ -23,29 +27,24 @@ repositories:
     type: git
     url: https://github.com/sgk-000/roboken_autoware.launcher.git
     version: roboken_ros2
-  autoware/msgs/autoware_api_msgs:
+  msgs/autoware/msgs/autoware_api_msgs:
     type: git
     url: https://github.com/tier4/AutowareArchitectureProposal_api_msgs.git
-  autoware/msgs/autoware_iv_msgs:
+    version: main
+  msgs/autoware/msgs/autoware_iv_msgs:
     type: git
     url: https://github.com/tier4/AutowareArchitectureProposal_msgs.git
     version: main
 
-#nav2
-  # nav2/roboken_navigation2:
-  #   type: git
-  #   url: https://github.com/sgk-000/yp_navigation2.git
-  #   version: yp-foxy-devel
-  # nav2/groot:
-  #   type: git
-  #   url: https://github.com/BehaviorTree/Groot.git
-  #   version: master
-
-#slam
-  # slam/slam_toolbox: #TODO: chenge use_sim time to false in online sync
-  #   type: git
-  #   url: https://github.com/SteveMacenski/slam_toolbox.git
-  #   version: ros2
+# nav2
+  nav2:
+    type: git
+    url: https://github.com/sgk-000/tsukutsuku_navigation2.git
+    version: tsukutsuku
+  nav2/groot:
+    type: git
+    url: https://github.com/BehaviorTree/Groot.git
+    version: master
 
 #vendor
   vendor/urg_node:
