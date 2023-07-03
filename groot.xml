@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<root main_tree_to_execute="BehaviorTree">
+    <!-- ////////// -->
+    <BehaviorTree ID="BehaviorTree">
+        <Control ID="RecoveryNode" name="NavigateRecovery" number_of_retries="6">
+            <Control ID="PipelineSequence" name="NavigateWithReplanning">
+                <Decorator ID="RateController" hz="1.0">
+                    <Control ID="RecoveryNode" name="ComputePathToPose" number_of_retries="1">
+                        <Action ID="ComputePathToPose" goal="{goal}" path="{path}" planner_id="GridBased" server_name="" server_timeout="" start=""/>
+                        <ReactiveFallback name="ComputePathToPoseRecoveryFallback">
+                            <Condition ID="GoalUpdated"/>
+                            <Action ID="ClearEntireCostmap" name="ClearGlobalCostmap-Context" server_timeout="" service_name="global_costmap/clear_entirely_global_costmap"/>
+                        </ReactiveFallback>
+                    </Control>
+                </Decorator>
+                <Control ID="RecoveryNode" name="FollowPath" number_of_retries="1">
+                    <Action ID="FollowPath" controller_id="FollowPath" goal_checker_id="" path="{path}" server_name="" server_timeout=""/>
+                    <ReactiveFallback name="FollowPathRecoveryFallback">
+                        <Condition ID="GoalUpdated"/>
+                        <Action ID="ClearEntireCostmap" name="ClearLocalCostmap-Context" server_timeout="" service_name="local_costmap/clear_entirely_local_costmap"/>
+                    </ReactiveFallback>
+                </Control>
+            </Control>
+            <ReactiveFallback name="RecoveryFallback">
+                <Condition ID="GoalUpdated"/>
+                <Control ID="RoundRobin" name="RecoveryActions">
+                    <Sequence name="ClearingActions">
+                        <Action ID="ClearEntireCostmap" name="ClearLocalCostmap-Subtree" server_timeout="" service_name="local_costmap/clear_entirely_local_costmap"/>
+                        <Action ID="ClearEntireCostmap" name="ClearGlobalCostmap-Subtree" server_timeout="" service_name="global_costmap/clear_entirely_global_costmap"/>
+                    </Sequence>
+                    <Action ID="Spin" server_name="" server_timeout="" spin_dist="1.57"/>
+                    <Action ID="Wait" server_name="" server_timeout="" wait_duration="5"/>
+                    <Action ID="BackUp" backup_dist="0.15" backup_speed="0.025" server_name="" server_timeout=""/>
+                </Control>
+            </ReactiveFallback>
+        </Control>
+    </BehaviorTree>
+    <!-- ////////// -->
+    <TreeNodesModel>
+        <Action ID="BackUp">
+            <input_port name="backup_dist" type="double">Distance to backup</input_port>
+            <input_port name="backup_speed" type="double">Speed at which to backup</input_port>
+            <input_port name="server_name" type="std::string">Action server name</input_port>
+            <input_port name="server_timeout" type="std::chrono::duration&lt;long, std::ratio&lt;1l, 1000l&gt; &gt;"/>
+        </Action>
+        <Action ID="ClearEntireCostmap">
+            <input_port name="server_timeout" type="std::chrono::duration&lt;long, std::ratio&lt;1l, 1000l&gt; &gt;"/>
+            <input_port name="service_name" type="std::string">please_set_service_name_in_BT_Node</input_port>
+        </Action>
+        <Action ID="ComputePathToPose">
+            <input_port name="goal" type="geometry_msgs::msg::PoseStamped_&lt;std::allocator&lt;void&gt; &gt;">Destination to plan to</input_port>
+            <output_port name="path" type="nav_msgs::msg::Path_&lt;std::allocator&lt;void&gt; &gt;">Path created by ComputePathToPose node</output_port>
+            <input_port name="planner_id" type="std::string"/>
+            <input_port name="server_name" type="std::string">Action server name</input_port>
+            <input_port name="server_timeout" type="std::chrono::duration&lt;long, std::ratio&lt;1l, 1000l&gt; &gt;"/>
+            <input_port name="start" type="geometry_msgs::msg::PoseStamped_&lt;std::allocator&lt;void&gt; &gt;">Start pose of the path if overriding current robot pose</input_port>
+        </Action>
+        <Action ID="FollowPath">
+            <input_port name="controller_id" type="std::string"/>
+            <input_port name="goal_checker_id" type="std::string"/>
+            <input_port name="path" type="nav_msgs::msg::Path_&lt;std::allocator&lt;void&gt; &gt;">Path to follow</input_port>
+            <input_port name="server_name" type="std::string">Action server name</input_port>
+            <input_port name="server_timeout" type="std::chrono::duration&lt;long, std::ratio&lt;1l, 1000l&gt; &gt;"/>
+        </Action>
+        <Condition ID="GoalUpdated"/>
+        <Control ID="PipelineSequence"/>
+        <Decorator ID="RateController">
+            <input_port name="hz" type="double">Rate</input_port>
+        </Decorator>
+        <Control ID="RecoveryNode">
+            <input_port name="number_of_retries" type="int">Number of retries</input_port>
+        </Control>
+        <Control ID="RoundRobin"/>
+        <Action ID="Spin">
+            <input_port name="server_name" type="std::string">Action server name</input_port>
+            <input_port name="server_timeout" type="std::chrono::duration&lt;long, std::ratio&lt;1l, 1000l&gt; &gt;"/>
+            <input_port name="spin_dist" type="double">Spin distance</input_port>
+        </Action>
+        <Action ID="Wait">
+            <input_port name="server_name" type="std::string">Action server name</input_port>
+            <input_port name="server_timeout" type="std::chrono::duration&lt;long, std::ratio&lt;1l, 1000l&gt; &gt;"/>
+            <input_port name="wait_duration" type="int">Wait time</input_port>
+        </Action>
+    </TreeNodesModel>
+    <!-- ////////// -->
+</root>
+
